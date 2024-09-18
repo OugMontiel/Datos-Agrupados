@@ -1,5 +1,5 @@
 import csv
-import re
+import pandas as pd
 
 with open('dato.txt', 'r') as file:
     dato = file.read()
@@ -20,7 +20,7 @@ with open('dato_Doble_punto_y_Coma.txt', 'w') as file:
 ###### Paso 2: generamos csv  ######
 ############################################
 
-encabezadosInicial=['UnidadesYProducto','Referencia','ReferenciaCopy','codigo','Compuesto','Uso','Aplicacion','Marca','vacio','vacioCopy']
+encabezadosInicial=['cantidad','Referencia','ReferenciaCopy','codigo','Compuesto','Uso','Aplicacion','Marca','vacio','vacioCopy','vacioCopyCopy']
 
 # Escribir en el archivo CSV
 with open("datoInicial.csv", mode="w", newline="") as archivo:
@@ -32,9 +32,29 @@ with open("datoInicial.csv", mode="w", newline="") as archivo:
 ###### paso 3: tratamos cada columna #######
 ############################################
 
-with open('datoInicial.csv', mode='r') as file:
-    lines = file.readlines()
+data = pd.read_csv('datoInicial.csv', header=0, skipinitialspace=True, encoding='utf-8')
 
+data.drop('vacio', axis=1, inplace=True)
+data.drop('vacioCopy', axis=1, inplace=True)
+data.drop('vacioCopyCopy', axis=1, inplace=True)
 
+# Agregar una nueva columna 'Producto' con lo mismo de cantidad
+data['Producto'] = data['cantidad']
+
+# Eliminar todos los espacios en blanco
+data['cantidad'] = data['cantidad'].str.replace(r'\s+', '', regex=True)
+
+# Eliminar todo a partir de la primera 'U' en las columnas 'cantidad' y 'Producto'
+data['cantidad'] = data['cantidad'].str.replace(r'U.*', '', regex=True)
+
+# Eliminar todo antes de la 'K', incluyendo la 'K'
+data['Producto'] = data['Producto'].str.replace(r'^.*K', 'K', regex=True)
+
+# Escribir el archivo CSV con el encabezado actualizado
+data.to_csv('datoEnTrasformacion.csv', index=False)
+
+###################
+#####
+######
 
 encabezadosFinal=['Unidades','Productos','Referencia','codigo','Compuesto','Uso','Aplicacion','Marca']
