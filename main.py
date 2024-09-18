@@ -40,12 +40,20 @@ data.drop('vacioCopyCopy', axis=1, inplace=True)
 
 # Agregar una nueva columna 'Producto' con lo mismo de cantidad
 data['Producto'] = data['cantidad']
+# Eliminar todo antes de la 'K', incluyendo la 'K'
+data['Producto'] = data['Producto'].str.replace(r'^.*K', 'K', regex=True)
+# Limpiar la columna 'Producto'
+data['Producto'] = data['Producto'].str.replace(r'\s+', ' ', regex=True).str.strip()
+
+
 # Eliminar todos los espacios en blanco
 data['cantidad'] = data['cantidad'].str.replace(r'\s+', '', regex=True)
 # Eliminar todo a partir de la primera 'U' en las columnas 'cantidad' y 'Producto'
 data['cantidad'] = data['cantidad'].str.replace(r'U.*', '', regex=True)
-# Eliminar todo antes de la 'K', incluyendo la 'K'
-data['Producto'] = data['Producto'].str.replace(r'^.*K', 'K', regex=True)
+# Convertir 'cantidad' a tipo numérico (convertir de texto a float)
+data['cantidad'] = pd.to_numeric(data['cantidad'])
+# Si deseas convertir a entero después de convertir a float (opcional)
+data['cantidad'] = data['cantidad'].astype('Int64')
 
 # Eliminar 'REF=' de la columna 'descripcion'
 data['Referencia'] = data['Referencia'].str.replace('REF=', '', regex=False)
@@ -76,11 +84,12 @@ data['Marca'] = data['Marca'].str.replace(r'\s+', '', regex=True)
 # Eliminar 'EN MOTORES DE VEHICULOS' de la columna 'Aplicacion
 data['Aplicacion'] = data['Aplicacion'].str.replace('EN MOTORES DE VEHICULOS', '', regex=False)
 
+########################################################################
+###### paso 4: Renombramos las columna y generamos archivo final #######
+########################################################################
+# Reordenar columnas
+encabezadosFinal=['cantidad','Producto','Referencia','codigo','Compuesto','Uso','Aplicacion','Marca']
+data = data[encabezadosFinal]
+
 # Escribir el archivo CSV con el encabezado actualizado
 data.to_csv('datoFinal.csv', index=False)
-
-###################
-#####
-######
-
-encabezadosFinal=['Unidades','Productos','Referencia','codigo','Compuesto','Uso','Aplicacion','Marca']
