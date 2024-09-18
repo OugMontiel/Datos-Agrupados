@@ -40,18 +40,44 @@ data.drop('vacioCopyCopy', axis=1, inplace=True)
 
 # Agregar una nueva columna 'Producto' con lo mismo de cantidad
 data['Producto'] = data['cantidad']
-
 # Eliminar todos los espacios en blanco
 data['cantidad'] = data['cantidad'].str.replace(r'\s+', '', regex=True)
-
 # Eliminar todo a partir de la primera 'U' en las columnas 'cantidad' y 'Producto'
 data['cantidad'] = data['cantidad'].str.replace(r'U.*', '', regex=True)
-
 # Eliminar todo antes de la 'K', incluyendo la 'K'
 data['Producto'] = data['Producto'].str.replace(r'^.*K', 'K', regex=True)
 
+# Eliminar 'REF=' de la columna 'descripcion'
+data['Referencia'] = data['Referencia'].str.replace('REF=', '', regex=False)
+# Unir 'referencia' y 'referencia_copy' en una nueva columna 'referencia_unida'
+data['Referencia'] = data['Referencia'] + ' / ' + data['ReferenciaCopy']
+# Eliminar todos los espacios en blanco
+data['Referencia'] = data['Referencia'].str.replace(r'\s+', '', regex=True)
+data.drop('ReferenciaCopy', axis=1, inplace=True)
+
+# Eliminar 'CODIGO ' de la columna 'codigo'
+data['codigo'] = data['codigo'].str.replace('CODIGO', '', regex=False)
+# Eliminar todos los espacios en blanco
+data['codigo'] = data['codigo'].str.replace(r'\s+', '', regex=True)
+
+# Eliminar 'COMPUESTO ' de la columna 'Compuesto'
+data['Compuesto'] = data['Compuesto'].str.replace('COMPUESTO ', '', regex=False)
+
+# Eliminar 'USO=  ' de la columna 'Uso'
+data['Uso'] = data['Uso'].str.replace('USO=', '', regex=False)
+# Eliminar todos los espacios en blanco
+data['Uso'] = data['Uso'].str.replace(r'\s+', '', regex=True)
+
+# Eliminar 'MARCA= ' de la columna 'Marca'
+data['Marca'] = data['Marca'].str.replace('MARCA=', '', regex=False)
+# Eliminar todos los espacios en blanco
+data['Marca'] = data['Marca'].str.replace(r'\s+', '', regex=True)
+
+# Eliminar 'EN MOTORES DE VEHICULOS' de la columna 'Aplicacion
+data['Aplicacion'] = data['Aplicacion'].str.replace('EN MOTORES DE VEHICULOS', '', regex=False)
+
 # Escribir el archivo CSV con el encabezado actualizado
-data.to_csv('datoEnTrasformacion.csv', index=False)
+data.to_csv('datoFinal.csv', index=False)
 
 ###################
 #####
