@@ -9,64 +9,32 @@ with open('dato.txt', 'r') as file:
 ########################################
 
 dato_Doble_punto_y_Coma = dato.split(';;')
-
 identificadores = dato_Doble_punto_y_Coma[0]  
-nota = dato_Doble_punto_y_Coma[-1]  
-
 del dato_Doble_punto_y_Coma[0]  # Elimina la primera línea (identificadores)
+nota = dato_Doble_punto_y_Coma[-1]  
 del dato_Doble_punto_y_Coma[-1]  # Elimina la última línea (nota)
-
 with open('dato_Doble_punto_y_Coma.txt', 'w') as file:
     file.write("\n".join(dato_Doble_punto_y_Coma))
 
-dato_coma = []
-for producto in dato_Doble_punto_y_Coma:
-    datoEnTrasformacion = producto.split(',')
-    dato_coma.extend(datoEnTrasformacion)
-with open('dato_coma.txt', 'w') as file:
-    file.write("\n".join(dato_coma))
-
 ############################################  
-###### Paso 2: Procesar cada producto ######
+###### Paso 2: generamos csv  ######
 ############################################
 
-estructura_productos = []
-for producto in dato_coma:
-    # Eliminar caracteres innecesarios como espacios en blanco adicionales
-    producto = producto.strip()
-    
-    # Buscar patrones clave: cantidad, referencia, código y composición
-    cantidad = re.search(r'\d+\.?\d*\s+UNIDAD', producto)
-    referencia = re.search(r'REF=\s*([\w-]+)', producto)
-    codigo = re.search(r'CODIGO\s*([\w-]+)', producto)
-    compuesto = re.search(r'COMPUESTO\s*([\w\s=]+)', producto)
-    uso = re.search(r'USO=\s*(\w+)', producto)
-    marca = re.search(r'MARCA=\s*(\w+)', producto)
-    
-    # Agregar al resultado estructurado
-    estructura_productos.append({
-        "cantidad": cantidad.group() if cantidad else None,
-        "referencia": referencia.group(1) if referencia else None,
-        "codigo": codigo.group(1) if codigo else None,
-        "compuesto": compuesto.group(1) if compuesto else None,
-        "uso": uso.group(1) if uso else None,
-        "marca": marca.group(1) if marca else None
-    })
+encabezadosInicial=['UnidadesYProducto','Referencia','ReferenciaCopy','codigo','Compuesto','Uso','Aplicacion','Marca','vacio','vacioCopy']
 
-# Nombre del archivo CSV
-archivo_csv = "cadena_distribucion.csv"
+# Escribir en el archivo CSV
+with open("datoInicial.csv", mode="w", newline="") as archivo:
+    escritor_csv = csv.writer(archivo)
+    escritor_csv.writerow(encabezadosInicial)
+    escritor_csv.writerows([line.split(',') for line in dato_Doble_punto_y_Coma])
 
-# Obtener los encabezados de los diccionarios (asumiendo que todas las claves son consistentes)
-encabezados = estructura_productos[0].keys()
+############################################
+###### paso 3: tratamos cada columna #######
+############################################
 
-# Escribir los datos en el archivo CSV
-with open(archivo_csv, mode="w", newline="") as archivo:
-    escritor_csv = csv.DictWriter(archivo, fieldnames=encabezados)
-    
-    # Escribir la fila de encabezados
-    escritor_csv.writeheader()
-    
-    # Escribir las filas de datos
-    escritor_csv.writerows(estructura_productos)
+with open('datoInicial.csv', mode='r') as file:
+    lines = file.readlines()
 
-print(f"Archivo '{archivo_csv}' generado exitosamente.")
+
+
+encabezadosFinal=['Unidades','Productos','Referencia','codigo','Compuesto','Uso','Aplicacion','Marca']
