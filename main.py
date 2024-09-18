@@ -9,20 +9,20 @@ with open('dato.txt', 'r') as file:
 ########################################
 
 dato_Doble_punto_y_Coma = dato.split(';;')
+
+identificadores = dato_Doble_punto_y_Coma[0]  
+nota = dato_Doble_punto_y_Coma[-1]  
+
+del dato_Doble_punto_y_Coma[0]  # Elimina la primera línea (identificadores)
+del dato_Doble_punto_y_Coma[-1]  # Elimina la última línea (nota)
+
 with open('dato_Doble_punto_y_Coma.txt', 'w') as file:
     file.write("\n".join(dato_Doble_punto_y_Coma))
 
-dato_punto_y_coma = []
-for producto in dato_Doble_punto_y_Coma:
-    dato_punto_y_coma = producto.split(';')
-    dato_punto_y_coma.extend(dato_punto_y_coma)
-with open('dato_punto_y_coma.txt', 'w') as file:
-    file.write("\n".join(dato_punto_y_coma))
-
 dato_coma = []
 for producto in dato_Doble_punto_y_Coma:
-    dato_punto_y_coma = producto.split(',')
-    dato_coma.extend(dato_punto_y_coma)
+    datoEnTrasformacion = producto.split(',')
+    dato_coma.extend(datoEnTrasformacion)
 with open('dato_coma.txt', 'w') as file:
     file.write("\n".join(dato_coma))
 
